@@ -69,17 +69,6 @@
             </div>
         </div>
     </div>
-    <div class="wsus__footer_bottom">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="wsus__copyright d-flex justify-content-center">
-                        <p>{{@$footerInfo->copyright}}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </footer>
 
 
