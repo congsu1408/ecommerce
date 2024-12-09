@@ -8,7 +8,7 @@
             <div class="col-xl-12 col-lg-12">
                 @if ($homepage_secion_banner_one->banner_one->status == 1)
                 <div class="wsus__monthly_top_banner">
-                    <a href="{{$homepage_secion_banner_one->banner_one->banner_url}}">
+                    <a>
                         <img class="img-fluid" src="{{asset($homepage_secion_banner_one->banner_one->banner_image)}}" alt="">
                     </a>
                 </div>

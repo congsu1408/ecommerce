@@ -9230,7 +9230,7 @@ DASHBOARD CHAT START
 
 .wsus__chat_area_body {
   max-height: 591px;
-  height: 591px;
+  height: 443px;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #08C #0b172d;
