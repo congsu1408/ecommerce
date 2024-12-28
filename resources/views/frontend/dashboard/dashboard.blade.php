@@ -7,65 +7,106 @@
 @section('content')
 <section id="wsus__dashboard">
 
-    <div class="container-fluid">
-      @include('frontend.dashboard.layouts.sidebar')
-      <div class="row">
-        <div class="col-xl-9 col-xxl-10 col-lg-9 ms-auto">
-            <h3>User Dashboard</h3>
-            <br>
-          <div class="dashboard_content">
-            <div class="wsus__dashboard">
-              <div class="row">
-                <div class="col-xl-2 col-6 col-md-4">
-                  <a class="wsus__dashboard_item red" href="{{route('user.orders.index')}}">
-                    <i class="fas fa-cart-plus"></i>
-                    <p>Total Order</p>
-                    <h4 style="color:#ffff">{{$totalOrder}}</h4>
-                  </a>
-                </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                  <a class="wsus__dashboard_item green" href="dsahboard_download.html">
-                    <i class="fas fa-cart-plus"></i>
-                    <p>Pending Orders</p>
-                    <h4 style="color:#ffff">{{$pendingOrder}}</h4>
-                  </a>
-                </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                  <a class="wsus__dashboard_item sky" href="dsahboard_review.html">
-                    <i class="fas fa-cart-plus"></i>
-                    <p>Complete Orders</p>
-                    <h4 style="color:#ffff">{{$completeOrder}}</h4>
-                  </a>
-                </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                  <a class="wsus__dashboard_item blue" href="{{route('user.review.index')}}">
-                    <i class="fas fa-star"></i>
-                    <p>Reviews</p>
-                    <h4 style="color:#ffff">{{$reviews}}</h4>
-                  </a>
-                </div>
+  <div class="container-fluid">
+    @include('frontend.dashboard.layouts.sidebar')
+    <div class="row">
+      <div class="col-xl-9 col-xxl-10 col-lg-9 ms-auto">
+        <h3>User Dashboard</h3>
+        <br>
+        <div class="dashboard_content">
+          <div class="wsus__dashboard">
+            <div class="row">
 
-                <div class="col-xl-2 col-6 col-md-4">
-                  <a class="wsus__dashboard_item purple" href="{{route('user.wishlist.index')}}">
-                    <i class="fas fa-star"></i>
-                    <p>Wishlist</p>
-                    <h4 style="color:#ffff">{{$wishlist}}</h4>
-                  </a>
-                </div>
-
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item orange" href="{{route('user.profile')}}">
-                      <i class="fas fa-user-shield"></i>
-                      <p>profile</p>
-                      <h4 style="color:#ffff">-</h4>
-                    </a>
+              <!-- Lịch sử mua sắm -->
+              <div class="col-lg-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h4>Purchase History</h4>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="purchaseHistoryChart"></canvas>
+                  </div>
                 </div>
               </div>
 
+              <!-- Giá trị mua sắm -->
+              <div class="col-lg-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h4>Purchase Value</h4>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="purchaseValueChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sản phẩm đã mua nhiều nhất -->
+              <div class="col-lg-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h4>Top Purchased Products</h4>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="topProductsChart"></canvas>
+                  </div>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Lịch sử mua sắm
+    const purchaseHistory = @json($purchaseHistory);
+    new Chart(document.getElementById('purchaseHistoryChart'), {
+      type: 'line',
+      data: {
+        labels: purchaseHistory.map(p => p.date),
+        datasets: [{
+          label: 'Total Orders',
+          data: purchaseHistory.map(p => p.total_orders),
+          borderColor: 'rgba(54, 162, 235, 1)',
+          backgroundColor: 'rgba(54, 162, 235, 0.2)'
+        }]
+      }
+    });
+
+    // Giá trị mua sắm
+    const purchaseValue = @json($purchaseValue);
+    new Chart(document.getElementById('purchaseValueChart'), {
+      type: 'line',
+      data: {
+        labels: purchaseValue.map(p => p.date),
+        datasets: [{
+          label: 'Total Spent ($)',
+          data: purchaseValue.map(p => p.total_spent),
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)'
+        }]
+      }
+    });
+
+    // Sản phẩm đã mua nhiều nhất
+    const topPurchasedProducts = @json($topPurchasedProducts);
+    new Chart(document.getElementById('topProductsChart'), {
+      type: 'bar',
+      data: {
+        labels: topPurchasedProducts.map(p => p.name),
+        datasets: [{
+          label: 'Total Quantity',
+          data: topPurchasedProducts.map(p => p.total_quantity),
+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+          borderColor: 'rgba(255, 159, 64, 1)'
+        }]
+      }
+    });
+  });
+</script>
 @endsection

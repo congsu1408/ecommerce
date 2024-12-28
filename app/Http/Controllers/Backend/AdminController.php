@@ -15,62 +15,100 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Stripe\Review;
+use Illuminate\Support\Facades\DB;
+
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        $todaysOrder = Order::whereDate('created_at', Carbon::today())->count();
-        $todaysPendingOrder = Order::whereDate('created_at', Carbon::today())
-        ->where('order_status', 'pending')->count();
-        $totalOrders = Order::count();
-        $totalPendingOrders = Order::where('order_status', 'pending')->count();
-        $totalCanceledOrders = Order::where('order_status', 'canceled')->count();
-        $totalCompleteOrders = Order::where('order_status', 'delivered')->count();
+        $revenueDaily = Order::selectRaw('DATE(created_at) as date, SUM(sub_total) as revenue')
+            ->whereNotIn('order_status', ['canceled', 'null']) // Loại bỏ trạng thái "canceled" và "null"
+            ->where('payment_status', 1) // Chỉ lấy các đơn hàng đã thanh toán
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+        // dd($revenueDaily);
+        $revenueWeekly = Order::selectRaw('WEEK(created_at) as week, SUM(sub_total) as revenue')
+            ->whereNotIn('order_status', ['canceled', 'null']) // Loại bỏ trạng thái "canceled" và "null"
+            ->where('payment_status', 1) // Chỉ lấy các đơn hàng đã thanh toán
+            ->groupBy('week')
+            ->orderBy('week', 'asc')
+            ->get();
+        // dd($revenueWeekly);
+        $revenueMonthly = Order::selectRaw('MONTH(created_at) as month, SUM(sub_total) as revenue')
+            ->whereNotIn('order_status', ['canceled', 'null']) // Loại bỏ trạng thái "canceled" và "null"
+            ->where('payment_status', 1) // Chỉ lấy các đơn hàng đã thanh toán
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->get();
 
-        $todaysEarnings = Order::where('order_status','!=', 'canceled')
-        ->where('payment_status',1)
-        ->whereDate('created_at', Carbon::today())
-        ->sum('sub_total');
+            $topProducts = DB::table('order_products')
+            ->join('products', 'order_products.product_id', '=', 'products.id') // Join với bảng products
+            ->select('products.name as product_name', DB::raw('SUM(order_products.qty) as total_sold'))
+            ->groupBy('products.name')
+            ->orderByDesc('total_sold')
+            ->limit(5)
+            ->get();
+        
+        $mostStockedProducts = DB::table('products')
+            ->select('name', 'qty')
+            ->where('qty', '>', 0) // Chỉ lấy sản phẩm có tồn kho
+            ->orderByDesc('qty') // Sắp xếp theo số lượng tồn kho giảm dần
+            ->limit(5)
+            ->get();
+        
 
-        $monthEarnings = Order::where('order_status','!=', 'canceled')
-        ->where('payment_status',1)
-        ->whereMonth('created_at', Carbon::now()->month)
-        ->sum('sub_total');
+        $popularCategories = DB::table('order_products')
+            ->join('products', 'order_products.product_id', '=', 'products.id')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->select('categories.name as category_name', DB::raw('SUM(order_products.qty) as total_sold'))
+            ->groupBy('categories.name')
+            ->orderByDesc('total_sold')
+            ->limit(5)
+            ->get();
 
-        $yearEarnings = Order::where('order_status','!=', 'canceled')
-        ->where('payment_status',1)
-        ->whereYear('created_at', Carbon::now()->year)
-        ->sum('sub_total');
+        // Tỷ lệ đóng góp doanh thu
+        $revenueShare = DB::table('order_products')
+            ->join('vendors', 'order_products.vendor_id', '=', 'vendors.id')
+            ->selectRaw('vendors.shop_name, SUM(order_products.qty * order_products.unit_price) as revenue')
+            ->groupBy('order_products.vendor_id', 'vendors.shop_name')
+            ->orderByDesc('revenue')
+            ->get();
 
-        $totalReview = ProductReview::count();
+        // Hiệu suất giao hàng
+        $deliveryPerformance = DB::table('orders')
+            ->join('order_products', 'orders.id', '=', 'order_products.order_id')
+            ->join('vendors', 'order_products.vendor_id', '=', 'vendors.id')
+            ->selectRaw('vendors.shop_name, 
+        COUNT(CASE WHEN orders.order_status = "delivered" THEN 1 END) AS delivered_orders, 
+        COUNT(*) AS total_orders, 
+        (COUNT(CASE WHEN orders.order_status = "delivered" THEN 1 END) / COUNT(*)) * 100 AS delivery_performance')
+            ->groupBy('order_products.vendor_id', 'vendors.shop_name')
+            ->orderByDesc('delivery_performance')
+            ->get();
 
-        $totalBrands = Brand::count();
-        $totalCategories = Category::count();
-        $totalBlogs = Blog::count();
-        $totalSubscriber = NewsletterSubscriber::count();
-        $totalVendors = User::where('role', 'vendor')->count();
-        $totalUsers = User::where('role', 'user')->count();
-
+        // Phân tích đánh giá
+        $vendorReviews = DB::table('product_reviews')
+            ->join('vendors', 'product_reviews.vendor_id', '=', 'vendors.id')
+            ->selectRaw('vendors.shop_name, 
+        AVG(CAST(product_reviews.rating AS DECIMAL)) AS average_rating, 
+        COUNT(CASE WHEN CAST(product_reviews.rating AS DECIMAL) <= 2 THEN 1 END) AS negative_reviews')
+            ->groupBy('product_reviews.vendor_id', 'vendors.shop_name')
+            ->orderByDesc('average_rating')
+            ->get();
 
 
         return view('admin.dashboard', compact(
-            'todaysOrder',
-            'todaysPendingOrder',
-            'totalOrders',
-            'totalPendingOrders',
-            'totalCanceledOrders',
-            'totalCompleteOrders',
-            'todaysEarnings',
-            'monthEarnings',
-            'yearEarnings',
-            'totalReview',
-            'totalBrands',
-            'totalCategories',
-            'totalBlogs',
-            'totalSubscriber',
-            'totalVendors',
-            'totalUsers'
+            'revenueDaily',
+            'revenueWeekly',
+            'revenueMonthly',
+            'topProducts',
+            'mostStockedProducts',
+            'popularCategories',
+            'revenueShare',
+            'deliveryPerformance',
+            'vendorReviews'
         ));
     }
 

@@ -1,19 +1,21 @@
 "use strict";
 
 // ChartJS
-if(window.Chart) {
-  Chart.defaults.global.defaultFontFamily = "'Nunito', 'Segoe UI', 'Arial'";
-  Chart.defaults.global.defaultFontSize = 11;
-  Chart.defaults.global.defaultFontStyle = 500;
-  Chart.defaults.global.defaultFontColor = "#999";
-  Chart.defaults.global.tooltips.backgroundColor = '#000';
-  Chart.defaults.global.tooltips.titleFontFamily = "'Nunito', 'Segoe UI', 'Arial'";
-  Chart.defaults.global.tooltips.titleFontColor = '#fff';
-  Chart.defaults.global.tooltips.titleFontSize = 20;
-  Chart.defaults.global.tooltips.xPadding = 10;
-  Chart.defaults.global.tooltips.yPadding = 10;
-  Chart.defaults.global.tooltips.cornerRadius = 3;
+if (window.Chart) {
+  Chart.defaults.font.family = "'Nunito', 'Segoe UI', 'Arial'";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.font.weight = 500;
+  Chart.defaults.color = "#999";
+
+  // Tooltips configuration
+  Chart.defaults.plugins.tooltip.backgroundColor = '#000';
+  Chart.defaults.plugins.tooltip.titleFont.family = "'Nunito', 'Segoe UI', 'Arial'";
+  Chart.defaults.plugins.tooltip.titleFont.color = '#fff';
+  Chart.defaults.plugins.tooltip.titleFont.size = 20;
+  Chart.defaults.plugins.tooltip.padding = 10;
+  Chart.defaults.plugins.tooltip.cornerRadius = 3;
 }
+
 
 // DropzoneJS
 if(window.Dropzone) {

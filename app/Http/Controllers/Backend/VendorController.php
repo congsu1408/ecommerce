@@ -9,77 +9,74 @@ use App\Models\ProductReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class VendorController extends Controller
 {
     public function dashboard()
     {
-        $todaysOrder = Order::whereDate('created_at', Carbon::today())->whereHas('orderProducts', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->count();
-        $todaysPendingOrder = Order::whereDate('created_at', Carbon::today())
-        ->where('order_status', 'pending')
-        ->whereHas('orderProducts', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->count();
-        $totalOrder = Order::whereHas('orderProducts', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->count();
-        $totalPendingOrder = Order::where('order_status', 'pending')
-        ->whereHas('orderProducts', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->count();
-        $totalCompleteOrder = Order::where('order_status', 'delivered')
-        ->whereHas('orderProducts', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->count();
-        $totalProducts = Product::where('vendor_id', Auth::user()->vendor->id)->count();
+        $vendorId = Auth::user()->id;
 
-        $todaysEarnings = Order::where('order_status', 'delivered')
-        ->where('payment_status',1)
-        ->whereDate('created_at', Carbon::today())
-        ->whereHas('orderProducts', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->sum('sub_total');
+        // 1.1 Doanh thu theo thời gian
+        $revenueDaily = DB::table('order_products')
+            ->where('vendor_id', $vendorId)
+            ->selectRaw('DATE(created_at) as date, SUM(qty * unit_price) as revenue')
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
 
-        $monthEarnings = Order::where('order_status', 'delivered')
-        ->where('payment_status',1)
-        ->whereMonth('created_at', Carbon::now()->month)
-        ->whereHas('orderProducts', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->sum('sub_total');
+        // 1.2 Tỷ lệ đóng góp doanh thu theo sản phẩm
+        $revenueByProduct = DB::table('order_products')
+            ->where('vendor_id', $vendorId)
+            ->selectRaw('product_name, SUM(qty * unit_price) as revenue')
+            ->groupBy('product_name')
+            ->orderByDesc('revenue')
+            ->get();
 
-        $yearEarnings = Order::where('order_status', 'delivered')
-        ->where('payment_status',1)
-        ->whereYear('created_at', Carbon::now()->year)
-        ->whereHas('orderProducts', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->sum('sub_total');
+        // 1.3 So sánh doanh thu giữa các tháng
+        $revenueMonthly = DB::table('order_products')
+            ->where('vendor_id', $vendorId)
+            ->selectRaw('MONTH(created_at) as month, SUM(qty * unit_price) as revenue')
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->get();
 
+        // 2.1 Top sản phẩm bán chạy
+        $topProducts = DB::table('order_products')
+            ->where('vendor_id', $vendorId)
+            ->selectRaw('product_name, SUM(qty) as total_sold')
+            ->groupBy('product_name')
+            ->orderByDesc('total_sold')
+            ->limit(5)
+            ->get();
 
-        $toalEarnings = Order::where('order_status', 'delivered')
-        ->whereHas('orderProducts', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->sum('sub_total');
+        // 2.2 Sản phẩm còn tồn kho nhiều nhất
+        $mostStockedProducts = DB::table('products')
+            ->where('vendor_id', $vendorId)
+            ->selectRaw('name, qty')
+            ->orderByDesc('qty')
+            ->limit(5)
+            ->get();
 
-        $totalReviews = ProductReview::whereHas('product', function($query){
-            $query->where('vendor_id', Auth::user()->vendor->id);
-        })->count();
-
-
+        // 2.3 Danh mục sản phẩm bán chạy nhất
+        $popularCategories = DB::table('order_products')
+            ->join('products', 'order_products.product_id', '=', 'products.id')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->where('order_products.vendor_id', $vendorId)
+            ->selectRaw('categories.name as category_name, SUM(order_products.qty) as total_sold')
+            ->groupBy('categories.name')
+            ->orderByDesc('total_sold')
+            ->limit(5)
+            ->get();
 
         return view('vendor.dashboard.dashboard', compact(
-            'todaysOrder',
-            'todaysPendingOrder',
-            'totalOrder',
-            'totalPendingOrder',
-            'totalCompleteOrder',
-            'totalProducts',
-            'todaysEarnings',
-            'monthEarnings',
-            'yearEarnings',
-            'toalEarnings',
-            'totalReviews'
+            'revenueDaily',
+            'revenueByProduct',
+            'revenueMonthly',
+            'topProducts',
+            'mostStockedProducts',
+            'popularCategories'
         ));
     }
 }

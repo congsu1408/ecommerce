@@ -11,91 +11,77 @@
           <div class="dashboard_content">
             <div class="wsus__dashboard">
               <div class="row">
-                <div class="col-xl-2 col-6 col-md-4">
-                  <a class="wsus__dashboard_item red" href="{{route('vendor.orders.index')}}">
-                    <i class="fas fa-cart-plus"></i>
-                    <p>Today's Orders</p>
-                    <h4 style="color:#ffff">{{$todaysOrder}}</h4>
-                  </a>
+                <!-- Doanh thu theo thời gian -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Revenue Over Time</h4>
                 </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="{{route('vendor.orders.index')}}">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>Td's Pending Orders</p>
-                      <h4 style="color:#ffff">{{$todaysPendingOrder}}</h4>
-                    </a>
+                <div class="card-body">
+                    <canvas id="revenueChart"></canvas>
                 </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="{{route('vendor.orders.index')}}">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>Total Orders</p>
-                      <h4 style="color:#ffff">{{$totalOrder}}</h4>
-                    </a>
-                </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="{{route('vendor.orders.index')}}">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>Total Pending Orders</p>
-                      <h4 style="color:#ffff">{{$totalPendingOrder}}</h4>
-                    </a>
-                </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="{{route('vendor.orders.index')}}">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>Completed Orders</p>
-                      <h4 style="color:#ffff">{{$totalCompleteOrder}}</h4>
-                    </a>
-                </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="{{route('vendor.products.index')}}">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>Total Products</p>
-                      <h4 style="color:#ffff">{{$totalProducts}}</h4>
-                    </a>
-                </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="javascript:;">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>Todays Earnings</p>
-                      <h4 style="color:#ffff">{{$settings->currency_icon}}{{$todaysEarnings}}</h4>
-                    </a>
-                </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="javascript:;">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>This Months Earnings</p>
-                      <h4 style="color:#ffff">{{$settings->currency_icon}}{{$monthEarnings}}</h4>
-                    </a>
-                </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="javascript:;">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>This Year Earnings</p>
-                      <h4 style="color:#ffff">{{$settings->currency_icon}}{{$yearEarnings}}</h4>
-                    </a>
-                </div>
+            </div>
+        </div>
 
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="javascript:;">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>Total Earnings</p>
-                      <h4 style="color:#ffff">{{$settings->currency_icon}}{{$toalEarnings}}</h4>
-                    </a>
+        <!-- Tỷ lệ đóng góp doanh thu -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Revenue Contribution by Products</h4>
                 </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="{{route('vendor.reviews.index')}}">
-                      <i class="fas fa-cart-plus"></i>
-                      <p>Total Reviews</p>
-                      <h4 style="color:#ffff">{{$totalReviews}}</h4>
-                    </a>
+                <div class="card-body">
+                    <canvas id="revenueByProductChart"></canvas>
                 </div>
-                <div class="col-xl-2 col-6 col-md-4">
-                    <a class="wsus__dashboard_item red" href="{{route('vendor.shop-profile.index')}}">
-                      <i class="fas fa-user-shield"></i>
-                      <p>shop profile</p>
-                      <h4 style="color:#ffff">-</h4>
-                    </a>
-                  </div>
+            </div>
+        </div>
+
+        <!-- So sánh doanh thu giữa các tháng -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Monthly Revenue Comparison</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyRevenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top sản phẩm bán chạy -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Top Selling Products</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="topProductsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sản phẩm tồn kho nhiều nhất -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Most Stocked Products</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="stockChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danh mục sản phẩm bán chạy nhất -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Popular Product Categories</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoriesChart"></canvas>
+                </div>
+            </div>
+        </div>
 
               </div>
 
@@ -105,4 +91,95 @@
       </div>
     </div>
   </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Doanh thu theo thời gian
+        const revenueDaily = @json($revenueDaily);
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: {
+                labels: revenueDaily.map(d => d.date),
+                datasets: [{
+                    label: 'Revenue',
+                    data: revenueDaily.map(d => d.revenue),
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)'
+                }]
+            }
+        });
+
+        // Tỷ lệ đóng góp doanh thu theo sản phẩm
+        const revenueByProduct = @json($revenueByProduct);
+        new Chart(document.getElementById('revenueByProductChart'), {
+            type: 'pie',
+            data: {
+                labels: revenueByProduct.map(p => p.product_name),
+                datasets: [{
+                    data: revenueByProduct.map(p => p.revenue),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+                }]
+            }
+        });
+
+        // So sánh doanh thu giữa các tháng
+        const revenueMonthly = @json($revenueMonthly);
+        new Chart(document.getElementById('monthlyRevenueChart'), {
+            type: 'bar',
+            data: {
+                labels: revenueMonthly.map(m => `Month ${m.month}`),
+                datasets: [{
+                    label: 'Revenue',
+                    data: revenueMonthly.map(m => m.revenue),
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)'
+                }]
+            }
+        });
+
+        // Top sản phẩm bán chạy
+        const topProducts = @json($topProducts);
+        new Chart(document.getElementById('topProductsChart'), {
+            type: 'bar',
+            data: {
+                labels: topProducts.map(p => p.product_name),
+                datasets: [{
+                    label: 'Total Sold',
+                    data: topProducts.map(p => p.total_sold),
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    borderColor: 'rgba(255, 159, 64, 1)'
+                }]
+            }
+        });
+
+        // Sản phẩm tồn kho nhiều nhất
+        const mostStockedProducts = @json($mostStockedProducts);
+        new Chart(document.getElementById('stockChart'), {
+            type: 'bar',
+            data: {
+                labels: mostStockedProducts.map(p => p.name),
+                datasets: [{
+                    label: 'Stock',
+                    data: mostStockedProducts.map(p => p.qty),
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)'
+                }]
+            }
+        });
+
+        // Danh mục sản phẩm bán chạy nhất
+        const popularCategories = @json($popularCategories);
+        new Chart(document.getElementById('categoriesChart'), {
+            type: 'pie',
+            data: {
+                labels: popularCategories.map(c => c.category_name),
+                datasets: [{
+                    data: popularCategories.map(c => c.total_sold),
+                    backgroundColor: ['#36A2EB', '#FF6384', '#4BC0C0', '#FFCE56', '#9966FF']
+                }]
+            }
+        });
+    });
+</script>
 @endsection
