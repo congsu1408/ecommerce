@@ -47,12 +47,12 @@
         <h1>Product Analysis</h1>
     </div>
     <div class="row">
-        <div class="row">
+        <div class="row mx-auto">
             <!-- Biểu đồ Top Selling Products -->
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Top 5 Selling Products</h4>
+                        <h4>Top 3 Selling Products</h4>
                     </div>
                     <div class="card-body">
                         <canvas id="topProductsChart"></canvas>
@@ -61,10 +61,10 @@
             </div>
 
             <!-- Biểu đồ Most Stocked Products -->
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Top 5 Most Stocked Products</h4>
+                        <h4>Top 3 Most Stocked Products</h4>
                     </div>
                     <div class="card-body">
                         <canvas id="mostStockedProductsChart"></canvas>
@@ -75,7 +75,7 @@
 
 
         <!-- Popular Categories -->
-        <div class="col-lg-4">
+        <!-- <div class="col-lg-4">
             <div class="card">
                 <div class="card-header">
                     <h4>Popular Categories</h4>
@@ -84,48 +84,9 @@
                     <canvas id="popularCategoriesChart"></canvas>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
-    <div class="section-header">
-        <h1>Vendor Performance Analysis</h1>
-    </div>
-    <div class="row">
-        <!-- Revenue Contribution -->
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Revenue Contribution</h4>
-                </div>
-                <div class="card-body">
-                    <canvas id="revenueChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Delivery Performance -->
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Delivery Performance</h4>
-                </div>
-                <div class="card-body">
-                    <canvas id="deliveryChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Vendor Reviews -->
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Vendor Reviews</h4>
-                </div>
-                <div class="card-body">
-                    <canvas id="reviewsChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 </section>
 
 
@@ -271,7 +232,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Top 5 Selling Products'
+                        text: 'Top 3 Selling Products'
                     }
                 },
                 scales: {
@@ -326,7 +287,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Top 5 Most Stocked Products'
+                        text: 'Top 3 Most Stocked Products'
                     }
                 },
                 scales: {
@@ -336,79 +297,6 @@
             }
         });
 
-
-
-
-        // Biểu đồ Popular Categories
-        const popularCategoriesCtx = document.getElementById('popularCategoriesChart').getContext('2d');
-        new Chart(popularCategoriesCtx, {
-            type: 'pie',
-            data: {
-                labels: popularCategories.map(category => category.category_name),
-                datasets: [{
-                    label: 'Total Sold',
-                    data: popularCategories.map(category => category.total_sold),
-                    backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(153, 102, 255, 0.2)'],
-                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 159, 64, 1)', 'rgba(153, 102, 255, 1)'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'top' },
-                    title: { display: true, text: 'Popular Categories' }
-                }
-            }
-        });
-
-        const revenueData = @json($revenueShare);
-        const deliveryData = @json($deliveryPerformance);
-        const reviewsData = @json($vendorReviews);
-
-        // Revenue Chart
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        new Chart(revenueCtx, {
-            type: 'pie',
-            data: {
-                labels: revenueData.map(v => v.shop_name),
-                datasets: [{
-                    data: revenueData.map(v => v.revenue),
-                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-                }]
-            },
-            options: { responsive: true }
-        });
-
-        // Delivery Performance Chart
-        const deliveryCtx = document.getElementById('deliveryChart').getContext('2d');
-        new Chart(deliveryCtx, {
-            type: 'bar',
-            data: {
-                labels: deliveryData.map(v => v.shop_name),
-                datasets: [{
-                    label: 'On-Time Deliveries (%)',
-                    data: deliveryData.map(v => v.delivery_performance),
-                    backgroundColor: '#36A2EB'
-                }]
-            },
-            options: { responsive: true }
-        });
-
-        // Reviews Chart
-        const reviewsCtx = document.getElementById('reviewsChart').getContext('2d');
-        new Chart(reviewsCtx, {
-            type: 'bar',
-            data: {
-                labels: reviewsData.map(v => v.shop_name),
-                datasets: [{
-                    label: 'Average Rating',
-                    data: reviewsData.map(v => v.average_rating),
-                    backgroundColor: '#FF6384'
-                }]
-            },
-            options: { responsive: true }
-        });
     });
 </script>
 @endsection

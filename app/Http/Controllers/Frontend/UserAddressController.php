@@ -34,7 +34,7 @@ class UserAddressController extends Controller
         $request->validate([
             'name' => ['required', 'max:200'],
             'email' => ['required', 'max:200', 'email'],
-            'phone' => ['required', 'max:200'],
+            'phone' => ['required', 'max:200','numeric'],
             'country' => ['required', 'max:200'],
             'state' => ['required', 'max:200'],
             'city' => ['required', 'max:200'],
@@ -85,7 +85,7 @@ class UserAddressController extends Controller
         $request->validate([
             'name' => ['required', 'max:200'],
             'email' => ['required', 'max:200', 'email'],
-            'phone' => ['required', 'max:200'],
+            'phone' => ['required', 'max:200','numeric'],
             'country' => ['required', 'max:200'],
             'state' => ['required', 'max:200'],
             'city' => ['required', 'max:200'],

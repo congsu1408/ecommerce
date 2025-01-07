@@ -48,14 +48,14 @@ class AdminController extends Controller
             ->select('products.name as product_name', DB::raw('SUM(order_products.qty) as total_sold'))
             ->groupBy('products.name')
             ->orderByDesc('total_sold')
-            ->limit(5)
+            ->limit(value: 3)
             ->get();
         
         $mostStockedProducts = DB::table('products')
             ->select('name', 'qty')
             ->where('qty', '>', 0) // Chỉ lấy sản phẩm có tồn kho
             ->orderByDesc('qty') // Sắp xếp theo số lượng tồn kho giảm dần
-            ->limit(5)
+            ->limit(3)
             ->get();
         
 
