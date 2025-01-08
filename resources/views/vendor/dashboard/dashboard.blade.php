@@ -12,10 +12,10 @@
             <div class="wsus__dashboard">
               <div class="row">
                 <!-- Doanh thu theo thời gian -->
-        <div class="col-lg-4">
+        <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h4>Revenue Over Time</h4>
+                    <h4>Daily Revenue</h4>
                 </div>
                 <div class="card-body">
                     <canvas id="revenueChart"></canvas>
@@ -23,23 +23,12 @@
             </div>
         </div>
 
-        <!-- Tỷ lệ đóng góp doanh thu -->
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Revenue Contribution by Products</h4>
-                </div>
-                <div class="card-body">
-                    <canvas id="revenueByProductChart"></canvas>
-                </div>
-            </div>
-        </div>
 
         <!-- So sánh doanh thu giữa các tháng -->
-        <div class="col-lg-4">
+        <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h4>Monthly Revenue Comparison</h4>
+                    <h4>Monthly Revenue</h4>
                 </div>
                 <div class="card-body">
                     <canvas id="monthlyRevenueChart"></canvas>

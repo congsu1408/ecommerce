@@ -13,6 +13,12 @@
       <div class="col-xl-9 col-xxl-10 col-lg-9 ms-auto">
         <h3>User Dashboard</h3>
         <br>
+        <div class="wallet-info mb-4">
+          <div class="alert alert-info d-flex justify-content-between align-items-center">
+            <span><strong>Wallet Balance:</strong></span>
+            <span>${{ number_format($walletBalance, 2) }}</span>
+          </div>
+        </div>
         <div class="dashboard_content">
           <div class="wsus__dashboard">
             <div class="row">

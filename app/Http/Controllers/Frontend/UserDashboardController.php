@@ -43,11 +43,17 @@ class UserDashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // 4. Lấy số dư ví (wallet_balance)
+        $walletBalance = DB::table('users')
+            ->where('id', $userId)
+            ->value('wallet_balance');
+
 
         return view('frontend.dashboard.dashboard', compact(
             'purchaseHistory',
             'purchaseValue',
-            'topPurchasedProducts'
+            'topPurchasedProducts',
+            'walletBalance'            
         ));
     }
 }

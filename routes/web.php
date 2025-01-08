@@ -120,6 +120,7 @@ Route::group(['middleware' =>['auth', 'verified'], 'prefix' => 'user', 'as' => '
     /** Order Routes */
     Route::get('orders', [UserOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/show/{id}', [UserOrderController::class, 'show'])->name('orders.show');
+    Route::delete('orders/destroy/{id}', [UserOrderController::class, 'destroy'])->name('orders.destroy');
 
     /** Wishlist routes */
     Route::get('wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
